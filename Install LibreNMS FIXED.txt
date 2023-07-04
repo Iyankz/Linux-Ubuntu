@@ -1,0 +1,167 @@
+
+*****************Install Libre NMS on Ubuntu 22.04*****************
+
+1. Login Privileges root
+$ sudo -i
+[sudo] password : 
+
+2. Atur Zona Waktu ke Asia/Jakarta
+# timedatectl set-timezone Asia/Jakarta
+
+3. Install Package RRDTool
+# apt-get install rrdtool whois fping imagemagick graphviz mtr-tiny nmap python3-mysqldb snmp snmpd python3-pip python3-memcache mtr-tiny acl unzip git curl wget -y
+
+4. Install Package Mariadb & nginx
+# apt-get install nginx mariadb-server php php-pear php-cgi php-common php-curl php-mbstring php-gd php-mysql php-bcmath php-imap php-json php-xml php-snmp php-fpm php-zip -y
+
+5. Edit Zona Waktu di PHP (bisa menggunakan kombinasi keyboard CTRL+W untuk mencari data kunci date)
+# nano /etc/php/8.1/fpm/php.ini
+	[Date]
+	; Defines the default timezone used by the date functions
+	; http://php.net/date.timezone
+	date.timezone = Asia/Jakarta
+# nano /etc/php/8.1/cli/php.ini
+	[Date]
+	; Defines the default timezone used by the date functions
+	; http://php.net/date.timezone
+	date.timezone = Asia/Jakarta
+# systemctl restart php8.1-fpm
+
+6. Konfigurasi Mariadb
+# mysql -u root
+	> CREATE DATABASE librenms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+	> CREATE USER 'librenms'@'localhost' IDENTIFIED BY 'password';
+	> GRANT ALL PRIVILEGES ON librenms.* TO 'librenms'@'localhost';
+	> flush privileges;
+	> quit;
+# nano /etc/mysql/mariadb.conf.d/50-server.cnf
+	###COPY BASSIC SETTING 
+	#
+	innodb_file_per_table=1
+	sql-mode=""
+	lower_case_table_names=0
+# systemctl restart mariadb
+# systemctl status mariadb
+
+8. Memebuat user baru
+# useradd -r -M -d /opt/librenms librenms
+# passwd
+	New password: password
+# usermod -a -G librenms www-data
+
+9. Download package librenms
+# cd /opt
+	/opt# git clone https://github.com/librenms/librenms.git librenms
+	/opt# touch /opt/librenms/logs/librenms.log
+	/opt# cp /opt/librenms/snmpd.conf.example /etc/snmp/snmpd.conf
+	/opt# cd
+
+10. Konfugurasi SNMP 
+# nano /etc/snmp/snmpd.conf
+	# Change RANDOMSTRINGGOESHERE to your preferred SNMP community string
+	com2sec readonly  default         NOC
+
+	group MyROGroup v2c        readonly
+	view all    included  .1                               80
+	access MyROGroup ""      any       noauth    exact  all    none   none
+
+	syslocation Rack1, CO Office PROXINET SUKABUMI, SUKABUMI, WEST JAVA, INDONESIA [-6.9457600,106.9517500]
+	syscontact "info.jabal@proxinet.co.id"
+
+	#OS Distribution Detection
+	extend distro /usr/bin/distro
+
+	#Hardware Detection
+	# (uncomment for x86 platforms)
+	#extend manufacturer '/bin/cat /sys/devices/virtual/dmi/id/sys_vendor'
+	#extend hardware '/bin/cat /sys/devices/virtual/dmi/id/product_name'
+	#extend serial '/bin/cat /sys/devices/virtual/dmi/id/product_serial'
+
+	# (uncomment for ARM platforms)
+	#extend hardware '/bin/cat /sys/firmware/devicetree/base/model'
+	#extend serial '/bin/cat /sys/firmware/devicetree/base/serial-number'
+ 
+# curl -o distro https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/distro
+# chmod +x distro
+# mv distro /usr/bin/distro
+# systemctl restart snmpd
+
+11. Konfigurasi Cron Job
+
+# cp /opt/librenms/dist/librenms.cron /etc/cron.d/librenms
+# cp /opt/librenms/misc/librenms.logrotate /etc/logrotate.d/librenms
+
+12. Konfigurasi Scheduler
+# cp /opt/librenms/dist/librenms-scheduler.service /opt/librenms/dist/librenms-scheduler.timer /etc/systemd/system/
+# systemctl enable librenms-scheduler.timer
+# systemctl start librenms-scheduler.timer
+
+13. Install Composer
+# cd /opt/librenms
+	/opt/librenms# ./scripts/composer_wrapper.php install --no-dev
+	/opt/librenms# cd
+# chown -R www-data:librenms /opt/librenms
+# chmod -R 775 /opt/librenms
+# setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+# setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+
+	
+14. Konfigurasi Web Server nginx
+# nano /etc/nginx/conf.d/librenms.conf
+
+server {
+ listen      80;
+ server_name 192.168.34.109;
+ root        /opt/librenms/html;
+ index       index.php;
+
+ charset utf-8;
+ gzip on;
+ gzip_types text/css application/javascript text/javascript application/x-javascript image/svg+xml text/plain text/xsd text/xml image/x-icon;
+ location / {
+  try_files $uri $uri/ /index.php?$query_string;
+ }
+ location /api/v0 {
+  try_files $uri $uri/ /api_v0.php?$query_string;
+ }
+ location ~ \.php {
+  include fastcgi.conf;
+  fastcgi_split_path_info ^(.+\.php)(/.+)$;
+  fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+ }
+ location ~ /\.ht {
+  deny all;
+ }
+}
+
+15. Mengaktifkan PHP-FPM dan NGINX Server
+# nginx -t
+# systemctl restart php8.1-fpm
+# systemctl stop apache2
+# systemctl restart nginx
+# systemctl status nginx
+
+16. Troubleshooting
+# sudo chown -R librenms:librenms /opt/librenms
+# sudo setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+# sudo chmod -R ug=rwX /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+# sudo su librenms
+ ./validate.php
+ /opt/librenms/scripts/github-remove -d
+ ./daily.sh
+# nano /opt/librenms/.env
+	#DB_HOST=localhost
+	#DB_DATABASE=librenms
+	#DB_USERNAME=librenms
+	#DB_PASSWORD=password
+# sudo cp /opt/librenms/misc/lnms-completion.bash /etc/bash_completion.d/
+# cd /opt/librenms
+	opt/librenms# git config --global --add safe.directory /opt/librenms
+# nano /etc/php/8.1/fpm/pool.d/www.conf
+	edit [www] ke [librenms]
+	edit user= www-data ke user= librenms
+	edit group= www-data ke group= librenms
+# nano /etc/php/8.1/fpm/pool.d/librenms.conf
+	edit [www] ke [librenms]
+	edit user= www-data ke user= librenms
+	edit group= www-data ke group= librenms

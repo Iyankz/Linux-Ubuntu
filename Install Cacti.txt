@@ -1,0 +1,20 @@
+Tutorial Install Cacti
+1. Login ke Ubuntu Server
+contoh@contoh:~$
+2. Login root
+contoh@contoh:~$ sudo-i 
+[sudo] password for cacti: (masukan password root)
+3. Install Cacti 
+root@contoh:~$ apt install cacti
+4. Untuk web server pilih apache2
+5. Masukan Password untuk login ke Cacti dan untuk database mysql
+6. Tunggu Proses Selesi
+7. edit Memory Limit Apache2
+root@contoh:~$ nano /etc/php/7.4/apache2/php.ini
+8. Cari kata Memory
+tekan tombol CTRL+W dan tulis Memory
+9. Setelah di di temukan ganti ukuran dari 128M menjadi 8192M
+10. kemudian save
+tekan tombol CRTL+X dan tekan Y
+11. Restart apache2
+root@contoh:~$ systemctl restart apache2.service
