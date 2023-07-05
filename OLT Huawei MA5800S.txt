@@ -1,0 +1,109 @@
+OLT Huawei OLT-Huawei
+
+Basic Command
+
+* enable = Privilege Mode
+* config = Config Mode
+* display = Menampilkan 
+* quit = Kembali ke menu sebelumnya
+* return = kembali ke Privilege Mode
+* sysman = system management	
+* commit = simpan sementara
+* save = simpan permanen
+
+
+1. Baud Rate 9600
+
+2. Login User Mode
+username : root
+password : admin123
+new password : AdminNOC2023!
+confirm new password : AdminNOC2023!
+
+3. Login Privilege Mode
+OLT-HW>enable
+
+4. Login Config Mode
+OLT-HW#config
+
+5. Ganti Nama Perangkat
+OLT-HW# sysname OLT-HW
+
+6. konfigurasi IP Interface Meth (management ethernet)
+OLT-HW(config)#interface meth 0
+OLT-HW(config-if-meth0)#ip address 192.168.13.2 24 description MGMT 
+
+7. Konfigurasi static route
+OLT-HW(config)#ip route-static 0.0.0.0 0.0.0.0 192.168.13.1
+
+8. Tambahkan User baru
+OLT-HW(config)#terminal user name 
+  User Name(length<6,15>):Iyankz23
+  User Password(length<12,128>):Ardiansyah@2023
+  Confirm Password(length<12,128>):Ardiansyah@2023
+  User profile name(<=15 chars)[root]:root
+  User's Level:
+     1. Common User  2. Operator  3. Administrator:3
+  Permitted Reenter Number(0--20):20
+  User's Appended Info(<=30 chars):
+  Adding user successfully
+  Repeat this operation? (y/n)[n]:n
+  
+9. Aktifkan Service 
+OLT-HW(config)#sysman service telnet enable
+OLT-HW(config)#sysman service snmp enable
+OLT-HW(config)#sysman service ssh enable
+
+10. Aktifkan bind interface service
+OLT-HW(config)#sysman server source telnet any-interface
+OLT-HW(config)#sysman server source snmp any-interface
+OLT-HW(config)#sysman server source ssh any-interface
+
+11. Membuat Vlan
+OLT-HW(config)#vlan 13 smart
+
+12. Tagging Vlan 
+OLT-HW(config)#port vlan 13 0/2 0 
+
+13. Membuat DBA Profile
+OLT-HW(config)#dba-profile add profile-id 13 profile-name Broadband type3 assure 102400 max 1024000
+
+14. Membuat Line Profile
+OLT-HW(config)#ont-lineprofile gpon profile-id 13 profile-name Broadband
+OLT-HW(config-gpon-lineprofile-13)#tcont 1 dba-profile-id 13 
+OLT-HW(config-gpon-lineprofile-13)#gem add 1 eth tcont 1 
+OLT-HW(config-gpon-lineprofile-13)#gem mapping 1 1 vlan 13  tranparent enable
+OLT-HW(config-gpon-lineprofile-13)#commit
+
+15. Membuat SRV Profile
+OLT-HW(config)#ont-srvprofile gpon profile-id 13 profile-name Broadband 
+OLT-HW(config-gpon-srvprofile-13)#ont-port eth 4  wifi 4 pots 0 
+OLT-HW(config-gpon-srvprofile-13)#commit 
+
+16. Mengkatifkan Auto Find ONT
+OLT-HW(config)#interface gpon 0/1 
+OLT-HW(config-if-gpon-0/1)#port 0 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 1 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 2 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 3 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 4 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 5 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 6 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 7 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 8 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 9 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 10 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 11 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 12 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 13 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 14 ont-auto-find enable
+OLT-HW(config-if-gpon-0/1)#port 15 ont-auto-find enable
+
+17. Mendeteksi ONT 
+OLT-HW(config-if-gpon-0/1)#display ont autofind all 
+
+18. Authorisasi ONT
+OLT-HW(config-if-gpon-0/1)#ont add 0 0 sn-auth 48575443C9BB10A3 omci ont-lineprofile-id 13 ont-srvprofile-id 13 description Pelanggan1
+
+19. Konfigurasi Service Port pada ONT
+OLT-HW(config)#service-port vlan 13 gpon 0/1/0 ont 0 gemport 1 multi-service user-vlan 13 
