@@ -129,4 +129,4 @@ OLT-HW(config-if-gpon-0/1)#display ont autofind 15
 OLT-HW(config-if-gpon-0/1)#ont add 0 0 sn-auth 48575443C9BB10A3 omci ont-lineprofile-id 13 ont-srvprofile-id 13 description Pelanggan1
 
 19. Konfigurasi Service Port pada ONT
-OLT-HW(config)#service-port vlan 13 gpon 0/1/0 ont 0 gemport 1 multi-service user-vlan 13 
+OLT-HW(config)#service-port vlan 13 gpon 0/1/0 ont 0 gemport 13 multi-service user-vlan 13 
