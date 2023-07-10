@@ -23,13 +23,13 @@ new password : AdminNOC2023!
 confirm new password : AdminNOC2023!
 
 3. Login Privilege Mode
-OLT-HW>enable
+MA5801-GP16>enable
 
 4. Login Config Mode
-OLT-HW#config
+MA5801-GP16#config
 
 5. Ganti Nama Perangkat
-OLT-HW# sysname OLT-HW
+MA5801-GP16# sysname OLT-HW
 
 6. konfigurasi IP Interface Meth (management ethernet)
 OLT-HW(config)#interface meth 0
