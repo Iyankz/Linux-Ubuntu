@@ -10,7 +10,7 @@ Basic Command
 * sysman = system management	
 * commit = simpan sementara
 * save = simpan permanen
-
+* undo = menghapus perintah yang sudah di tulis
 
 1. Baud Rate 9600
 
