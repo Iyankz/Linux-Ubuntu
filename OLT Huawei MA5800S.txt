@@ -60,23 +60,30 @@ OLT-HW(config)#sysman server source snmp any-interface
 OLT-HW(config)#sysman server source ssh any-interface
 
 11. Membuat Vlan
-OLT-HW(config)#vlan 13 smart
+OLT-HW(config)#vlan 13 to 14 smart
 
 12. Tagging Vlan 
-OLT-HW(config)#port vlan 13 0/2 0 
+OLT-HW(config)#port vlan 13 to 14 0/2 0 
 
 13. Membuat DBA Profile
-OLT-HW(config)#dba-profile add profile-id 13 profile-name Broadband type3 assure 102400 max 1024000
+OLT-HW(config)#dba-profile add profile-id 13 profile-name PPPoE type3 assure 102400 max 1024000
+OLT-HW(config)#dba-profile add profile-id 14 profile-name Hotspot type3 assure 102400 max 1024000
 
 14. Membuat Line Profile
-OLT-HW(config)#ont-lineprofile gpon profile-id 13 profile-name Broadband
-OLT-HW(config-gpon-lineprofile-13)#tcont 1 dba-profile-id 13 
-OLT-HW(config-gpon-lineprofile-13)#gem add 1 eth tcont 1 
-OLT-HW(config-gpon-lineprofile-13)#gem mapping 1 1 vlan 13  tranparent enable
+OLT-HW(config)#ont-lineprofile gpon profile-id 13 profile-name PPPoE
+OLT-HW(config-gpon-lineprofile-13)#tcont 13 dba-profile-id 13 
+OLT-HW(config-gpon-lineprofile-13)#gem add 13 eth tcont 13 
+OLT-HW(config-gpon-lineprofile-13)#gem mapping 13 0 vlan 13
+OLT-HW(config-gpon-lineprofile-13)#commit
+
+OLT-HW(config)#ont-lineprofile gpon profile-id 14 profile-name Hotspot
+OLT-HW(config-gpon-lineprofile-13)#tcont 14 dba-profile-id 14 
+OLT-HW(config-gpon-lineprofile-13)#gem add 14 eth tcont 14 
+OLT-HW(config-gpon-lineprofile-13)#gem mapping 14 1 vlan 14
 OLT-HW(config-gpon-lineprofile-13)#commit
 
 15. Membuat SRV Profile
-OLT-HW(config)#ont-srvprofile gpon profile-id 13 profile-name Broadband 
+OLT-HW(config)#ont-srvprofile gpon profile-id 1 profile-name FTTx 
 OLT-HW(config-gpon-srvprofile-13)#ont-port eth 4  wifi 4 pots 0 
 OLT-HW(config-gpon-srvprofile-13)#commit 
 
@@ -100,8 +107,22 @@ OLT-HW(config-if-gpon-0/1)#port 14 ont-auto-find enable
 OLT-HW(config-if-gpon-0/1)#port 15 ont-auto-find enable
 
 17. Mendeteksi ONT 
-OLT-HW(config-if-gpon-0/1)#display ont autofind all 
-
+OLT-HW(config-if-gpon-0/1)#display ont autofind 0
+OLT-HW(config-if-gpon-0/1)#display ont autofind 1
+OLT-HW(config-if-gpon-0/1)#display ont autofind 2
+OLT-HW(config-if-gpon-0/1)#display ont autofind 3
+OLT-HW(config-if-gpon-0/1)#display ont autofind 4
+OLT-HW(config-if-gpon-0/1)#display ont autofind 5
+OLT-HW(config-if-gpon-0/1)#display ont autofind 6
+OLT-HW(config-if-gpon-0/1)#display ont autofind 7
+OLT-HW(config-if-gpon-0/1)#display ont autofind 8
+OLT-HW(config-if-gpon-0/1)#display ont autofind 9
+OLT-HW(config-if-gpon-0/1)#display ont autofind 10
+OLT-HW(config-if-gpon-0/1)#display ont autofind 11
+OLT-HW(config-if-gpon-0/1)#display ont autofind 12
+OLT-HW(config-if-gpon-0/1)#display ont autofind 13
+OLT-HW(config-if-gpon-0/1)#display ont autofind 14
+OLT-HW(config-if-gpon-0/1)#display ont autofind 15
 18. Authorisasi ONT
 OLT-HW(config-if-gpon-0/1)#ont add 0 0 sn-auth 48575443C9BB10A3 omci ont-lineprofile-id 13 ont-srvprofile-id 13 description Pelanggan1
 
