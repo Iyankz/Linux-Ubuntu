@@ -29,7 +29,7 @@ MA5801-GP16>enable
 MA5801-GP16#config
 
 5. Ganti Nama Perangkat
-MA5801-GP16# sysname OLT-HW
+MA5801-GP16#sysname OLT-HW
 
 6. konfigurasi IP Interface Meth (management ethernet)
 OLT-HW(config)#interface meth 0
