@@ -11,6 +11,8 @@ Basic Command
 * commit = simpan sementara
 * save = simpan permanen
 * undo = menghapus perintah yang sudah di tulis
+* to = sampai
+
 
 1. Baud Rate 9600
 
