@@ -13,7 +13,6 @@ Basic Command
 * undo = menghapus perintah yang sudah di tulis
 * to = sampai
 
-
 1. Baud Rate 9600
 
 2. Login User Mode
@@ -125,9 +124,13 @@ OLT-HW(config-if-gpon-0/1)#display ont autofind 12
 OLT-HW(config-if-gpon-0/1)#display ont autofind 13
 OLT-HW(config-if-gpon-0/1)#display ont autofind 14
 OLT-HW(config-if-gpon-0/1)#display ont autofind 15
+OLT-HW(config)#display ont autofind all 
 
 18. Authorisasi ONT
 OLT-HW(config-if-gpon-0/1)#ont add 0 0 sn-auth 48575443C9BB10A3 omci ont-lineprofile-id 13 ont-srvprofile-id 13 description Pelanggan1
 
 19. Konfigurasi Service Port pada ONT
 OLT-HW(config)#service-port vlan 13 gpon 0/1/0 ont 0 gemport 1 multi-service user-vlan 13 
+
+20. Cek Redaman ONT
+OLT-HW(config-if-gpon-0/1)#disp ont optical-info 0 all
