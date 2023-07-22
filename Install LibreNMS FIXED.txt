@@ -149,6 +149,7 @@ server {
  ./validate.php
  /opt/librenms/scripts/github-remove -d
  ./daily.sh
+pip3 install -r /opt/librenms/requirements.txt
 # nano /opt/librenms/.env
 	#DB_HOST=localhost
 	#DB_DATABASE=librenms
