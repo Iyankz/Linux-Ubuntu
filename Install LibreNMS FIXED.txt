@@ -46,7 +46,7 @@ $ sudo -i
 8. Memebuat user baru
 # useradd -r -M -d /opt/librenms librenms
 # passwd
-	New password: password
+	New password: password123
 # usermod -a -G librenms www-data
 
 9. Download package librenms
