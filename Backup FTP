@@ -1,0 +1,39 @@
+=============================================MikroTIK=============================================
+/export file=NamaFile
+;delay 5s;
+/tool fetch mode=ftp address=xxx.xxx.xxx.xxx user=Username Password=Password src-path=NamaFile.rsc dst-path=Directory/NamaFile.rsc upload=yes
+
+=============================================CISCO=============================================
+copy running-config ftp://xxx.xxx.xxx.xxx/Directory/ vrf management
+copy ftp://xxx.xxx.xxx.xxx/Directory/ vrf management
+Username : Username
+Password : Password
+
+=============================================DCN=============================================
+copy running-config ftp://Username:Password@xxx.xxx.xxx.xxx/Directory/NamaFile
+
+=============================================OLT WOLK=============================================
+backup configuration format gz ftp xxx.xxx.xxx.xxx Username Password NamaFile
+
+=============================================OLT PHYHOME=============================================
+upload config xxx.xxx.xxx.xxx Username Password NamaFile source-ip yyy.yyy.yyy.yyy
+download config xxx.xxx.xxx.xxx Username Password NamaFile source-ip yy
+
+=============================================OLT ZTE=============================================
+file upload cfg startrun.dat ftp ipaddress xxx.xxx.xxx.xxx user Username password Password
+file download cfg startrun.dat ftp ipaddress xxx.xxx.xxx.xxx user Username password Password
+
+=============================================Juniper=============================================
+file copy /config/juniper.conf.gz ftp://Username@xxx.xxx.xxx.xxx/
+
+=============================================Huawei=============================================
+ftp put host-ip xxx.xxx.xxx.xxx1 username username sourcefile vrpcfg.zip
+
+
+xxx.xxx.xxx.xxx = IP FTP Server
+yyy.yyy.yyy.yyy = IP Perangkat
+Username = Username FTP Server
+Password = Password FTP Server
+Directory = Folder untuk upload file di FTP Server
+Path = Folder atau Directory
+NamaFile = Nama file Backup config
