@@ -46,7 +46,7 @@ $ sudo -i
 8. Memebuat user baru
 # useradd -r -M -d /opt/librenms librenms
 # passwd
-	New password: password123
+	New password: password2023
 # usermod -a -G librenms www-data
 
 9. Download package librenms
@@ -111,7 +111,7 @@ $ sudo -i
 
 server {
  listen      80;
- server_name 192.168.34.109;
+ server_name 192.168.26.29;
  root        /opt/librenms/html;
  index       index.php;
 
@@ -140,6 +140,7 @@ server {
 # systemctl stop apache2
 # systemctl restart nginx
 # systemctl status nginx
+# apt remove apache2
 
 16. Troubleshooting
 # sudo chown -R librenms:librenms /opt/librenms
@@ -149,7 +150,7 @@ server {
  ./validate.php
  /opt/librenms/scripts/github-remove -d
  ./daily.sh
-pip3 install -r /opt/librenms/requirements.txt
+ pip3 install -r /opt/librenms/requirements.txt
 # nano /opt/librenms/.env
 	#DB_HOST=localhost
 	#DB_DATABASE=librenms
@@ -166,3 +167,31 @@ pip3 install -r /opt/librenms/requirements.txt
 	edit [www] ke [librenms]
 	edit user= www-data ke user= librenms
 	edit group= www-data ke group= librenms
+	
+	
+/opt/librenms/config.php	
+	
+Description Parsing
+Keywords
+Cust - Customer
+Transit - Transit link
+Peering - Peering link
+Core - Infrastructure link (non-customer)
+Info-keywords
+() contains a note
+{} contains your circuit id
+[] contains the service type or speed
+
+
+Examples
+Cisco IOS / NXOS / IOSXR:
+
+
+interface Gi0/1
+descr Transit: Example Provider (AS65000)
+interface Gi0/2
+descr Peering: Peering Exchange
+interface Gi0/3
+descr Core: core.router01 FastEthernet0/0 (Telco X CCID023141)
+interface Gi0/4
+descr Cust: Example Customer [10Mbit] (T1 Telco Y CCID129031) {EXAMP0001}
