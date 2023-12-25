@@ -27,7 +27,7 @@ Gunakan script berikut ini:
 
 $TTL 604800
 @	IN	SOA	risenmedia.com.	root.risenmedia.com. (
-		200				; Serial
+		    200				; Serial
 		 604800				; Refresh
 		  86400		 		; Retry
 		2419200		 		; Expire
@@ -42,11 +42,11 @@ www	IN 	A	103.180.198.140
 Gunakan script berikut ini:
 $TTL 604800
 @	IN	SOA	risenmedia.com. root.risenmedia.com. (
-		200				; Serial
-		 604800				; Refresh
-		  86400		 		; Retry
-		2419200 			; Expire
-		 604800 )			; Negative Cache TTL
+			200			; Serial
+		     604800			; Refresh
+		      86400		 	; Retry
+		    2419200			; Expire
+		     604800 )			; Negative Cache TTL
 ;
 @ 	IN 	NS 	risenmedia.com.
 1	IN 	PTR	risenmedia.com.
