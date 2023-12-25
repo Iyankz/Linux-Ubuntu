@@ -1,0 +1,92 @@
+						Membuat DNS Server BIND9 pada Ubuntu 20.04
+
+
+1. Login sebagai root, dan lakukan instalasi packet bind9 dengan perintah
+ #apt-get install bind9.
+2. Buka file named.conf.local dengan perintah
+ #nano /etc/bind/named.conf.local 
+3. Setelah file terbuka, ketik script di bawah ini:
+
+zone "risenmedia.com" {
+type master;
+file "/etc/bind/db.risenmedia.com";
+};
+zone "198.180.103.in-addr.arpa" {
+type master;
+file "/etc/bind/db.198.180.103";
+};
+
+4. Copy file db.local untuk membuat file forward dan copy file db.127 untuk membuat file revers seperti berikut :
+ #cp /etc/bind/db.local /etc/bind/db.risenmedia.com
+ #cp /etc/bind/db.127 /etc/bind/db.198.180.103
+
+5. Edit file db.risenmedia.com dengan perintah
+ #nano /etc/bind/db.risenmedia.com
+6. Isikan script pembuatan DNS pada file db.risenmedia.com.
+Gunakan script berikut ini:
+
+$TTL 604800
+@	IN	SOA	risenmedia.com.	root.risenmedia.com. (
+			200				; Serial
+		 604800				; Refresh
+		  86400		 		; Retry
+		2419200		 		; Expire
+		 604800 )			; Negative Cache TTL
+;
+@ 	IN 	NS	risenmedia.com.
+@ 	IN 	A	103.180.198.140
+www	IN 	A	103.180.198.140
+
+7. Edit juga file db.2.168.182 dengan perintah #nano /etc/bind/db.198.180.103
+8. Isikan juga script pembuatan DNS pada file db.198.180.103.
+Gunakan script berikut ini:
+$TTL 604800
+@	IN	SOA	risenmedia.com. root.risenmedia.com. (
+			200				; Serial
+		 604800				; Refresh
+		  86400		 		; Retry
+		2419200 			; Expire
+		 604800 )			; Negative Cache TTL
+;
+@ 	IN 	NS 	risenmedia.com.
+1	IN 	PTR	risenmedia.com.
+
+9. Kemudian restart service bind dan pastikan tidak terjadi error.
+Gunakan perintah:
+ #systemctl restart bind9.service
+ #systemctl status bind9.service
+10. Setelah hasil pembuatan DNS Selesai, masukkan isian daftar DNS pada file resolv.com
+Gunakan perintah berikut:
+ #nano /etc/resolv.conf
+11.Isikan dengan DNS server yang kita bangun. 
+Tambahkan script berikut ini:
+nameserver 103.180.198.140
+
+12. Kemudian lakukan pengujian DNS server baik dari server itu sendiri maupun dari klien. 
+Pengujian DNS server paling sederhana adalah menggunakan perintah ping, 
+yaitu dengan melakukan ping pada alamat domain yang kita bangun. 
+
+13. Ujilah kembali dengan melakukan ping terhadap subdomain server, gunakan perintah berikut ini:
+#ping www.risenmedia.com
+Gunakan perintah berikut:#ping risenmedia.com
+
+14. Lalukan pengujian lain dengan menggunakan nslookup, gunakan perintah perikut ini:
+#nslookup
+> risenmedia.com
+
+15.	Untuk pengujian dari klien pastikan setting DNS Server pada klien sudah benar menggunakan IP DNS server yang kita bangun. 
+Pengujian pada klien windows dapat dilakukan dari Command promt(cmd) dengan perintah ping dan nslookup
+
+16. Agar DNS Server dapat diakses oleh seluruh klien baik dalam 1 network maupun tidak 1 network dengan DNS server. 
+Untuk konfiugurasi lain silakan anda dikembangkan sendiri.
+Untuk dapat melakukan konfigurasi, gunakan perintah berikut:
+ #nano /etc/bind/named.conf.options
+
+17. Setelah terbuka file named.conf.options silahkan anda tambahkan script dibawah ini:
+	forwarders {
+    103.88.88.88;
+    }
+
+	allow-query {
+	0.0.0.0/0;
+18. Selesai
