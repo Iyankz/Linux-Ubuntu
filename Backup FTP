@@ -27,7 +27,7 @@ file download cfg startrun.dat ftp ipaddress xxx.xxx.xxx.xxx user Username passw
 file copy /config/juniper.conf.gz ftp://Username@xxx.xxx.xxx.xxx/
 
 =============================================Huawei=============================================
-ftp put host-ip xxx.xxx.xxx.xxx1 username username sourcefile vrpcfg.zip
+ftp put host-ip xxx.xxx.xxx.xxx username username sourcefile vrpcfg.zip
 
 
 xxx.xxx.xxx.xxx = IP FTP Server
