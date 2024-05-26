@@ -1,0 +1,4 @@
+Notifikasi Bot Telegram Mikrotik Versi 6 sampai versi 7.12.1
+/tool fetch url="https://api.telegram.org/botxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+Notifikasi Bot Telegram Mikrotik Versi 7.12.1 ke atas
+/tool fetch http-method=post dst-path=login.txt mode=https url="https://api.telegram.org/botxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
