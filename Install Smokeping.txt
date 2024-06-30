@@ -1,0 +1,58 @@
+*****************Install Smokeping Ubuntu 20.04****************
+
+1. Login Privileges root
+$ sudo -i
+[sudo] password : 
+
+2. Atur Zona Waktu ke Asia/Jakarta
+# timedatectl set-timezone Asia/Jakarta
+
+3. Install Smokeping
+# apt install smokeping -y
+
+4. Ubah permission /var/lib/smokeping
+# chown smokeping:www-data -R /var/lib/smokeping/
+
+5. Aktifkan cgi dan smokeping di apache
+# a2enmod cgid
+# a2enconf smokeping
+
+6. Validasi konfigurasi smokeping
+# smokeping --check
+
+7. Aktifkan service smokeping waktu booting
+# systemctl enable smokeping
+
+8. Konfigurasi Smokeping
+# nano /etc/smokeping/config.d/Targets
+*** Targets ***
+
+probe = FPing
+
+menu = Top
+title = Network Latency Grapher
+remark = Welcome to the SmokePing website of PROXINET Company. \
+         Here you will learn all about the latency of our network.
+
++ Core_Router
+menu = Core Router
+title = Core Router
+
+++ 
+menu = 
+title = 
+host = 
+
++ Content_Provider_IX
+menu = Content Provider and IX
+title = Content Provider and IX
+
+++ IIX
+menu = IIX
+title = IIX
+host = 123.108.8.111
+
+9. Restart Smokeping Agar file konfigurasi di muat pada server
+# systemctl restart smokeping
+
+10. Akses Smokeping di browser http://ipserver/smokeping
