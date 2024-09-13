@@ -1,0 +1,149 @@
+																	######### Konfigurasi OLT ZTE #########
+
+
+1. Remote OLT menggunakan kabel CONSOLE (port CLI)
+	baud rate 96000
+ZXAN>enable
+Password : zxr10
+ZXAN#configure terminal
+ZXAN(config)# no ssh server only
+ZXAN(config)# interface mng1
+ZXAN(config-if)# ip addreess xxx.xxxx.xxx.xxx XXX.XXX.XXX.XXX		\\\\\\\\Isi IP dan Subnet Mask untuk port management (port eth OLT)////////
+
+2. Remote OLT Via Telnet 
+telnet xxx.xxx.xxx.xxx												\\\\\\\\Isi IP yang sudah di setup di port management////////
+Username: zte
+Password : zte
+ZXAN#
+
+3. Konfigurasi VLAN
+ZXAN# configure terminal
+ZXAN(config)# vlan 100												\\\\\\\\Untuk vlan bisa di sesuaikan dengan jaringan masing-masing. ini contoh rencana topologi ada 2 layanan 1 PPPoE dan Hotspot////////
+ZXAN(config-vlan100)# name NAMA_VLAN
+ZXAN(config-vlan100)# description DESKRIPSI VLAN
+ZXAN(config-vlan100)# exit
+ZXAN(config)# vlan 200												\\\\\\\\Untuk vlan bisa di sesuaikan dengan jaringan masing-masing////////
+ZXAN(config-vlan100)# name NAMA_VLAN
+ZXAN(config-vlan100)# description DESKRIPSI VLAN
+ZXAN(config-vlan100)# exit
+ZXAN(config)# interface xgei_1/19/1									\\\\\\\Konfigurasi ini untuk port uplink 10G dengan posisi card 19 port 1//////////////
+ZXAN(config-if)# switchport mode trunk
+ZXAN(config-if)# switchport vlan 100,200 tag
+ZXAN(config-if)# no shut
+ZXAN(config-if)# description DESKRIPSI PORT 
+ZXAN(config-if)# exit
+ZXAN(config)# 
+
+4. Konfigurasi tcont 
+ZXAN(config)# gpon
+ZXAN(config-gpon)# profile tcont 1 type 4 maximum 204800
+
+5. Konfigurasi vlan provile
+ZXAN(config)# gpon
+ZXAN(config-gpon)# onu profile vlan 100 tag-mode tag cvlan 100
+ZXAN(config-gpon)# onu profile vlan 200 tag-mode tag cvlan 200
+ZXAN(config)# exit
+
+6. Konfigurasi ONU Type
+ZXAN(config)# pon
+ZXAN(config-pon)# onu-type ALL gpon description 4eth,WIFI
+ZXAN(config-pon)# onu-type ALL gpon max-tcont 32
+ZXAN(config-pon)# onu-type ALL gpon max-gemport 64
+ZXAN(config-pon)# onu-type ALL gpon max-switch-perslot 8
+ZXAN(config-pon)# nu-type ALL gpon max-flow-perswitch 32
+ZXAN(config-pon)# onu-type ALL gpon max-iphost 8
+ZXAN(config-pon)# onu-type-if ALL eth_0/1
+ZXAN(config-pon)# onu-type-if ALL eth_0/2
+ZXAN(config-pon)# onu-type-if ALL eth_0/3
+ZXAN(config-pon)# onu-type-if ALL eth_0/4
+ZXAN(config-pon)# onu-type-if ALL eth_0/1
+ZXAN(config-pon)# onu-type-if ALL eth_0/2
+ZXAN(config-pon)# onu-type-if ALL eth_0/3
+ZXAN(config-pon)# onu-type-if ALL eth_0/4
+ZXAN(config-pon)# uncfg-onu-display-info model sn pw 
+ZXAN(config-pon)# exit
+
+7. Aktifkan Port GPON
+ZXAN(config)# interface gpon_1/2/1									\\\\\\\Contoh Card 2 Port 1//////////////
+ZXAN(config-if)# no shut
+ZXAN(config-if)# end												\\\\\\\Pada step ini konfigurasi OLT sudah selesai//////////////
+ZXAN# write															\\\\\\\Jangan lupa di simpan//////////////
+
+
+
+																	######### Registrasi ONU pada OLT ZTE #########
+																	
+1. Detek SN ONU
+ZXAN(config)# show gpon onu uncfg
+
+2. Tambahan SN ONU  ke PORT OLT
+ZXAN(config)# interface gpon-olt_1/2/1
+ZXAN(config-if)# onu 1 type ALL sn ***********						\\\\\\\Masukan ID ONU dan SN ONU yang sudah terbaca di OLT//////////////
+ZXAN(config-if)# exit
+
+3. Konfigurasi ONU vlan servis port vlan
+ZXAN(config)# interface gpon-onu_1/2/1:1
+ZXAN(config-if)# tcont 1 profile 1
+ZXAN(config-if)# gemport 1 tcont 1
+ZXAN(config-if)# service-port 1 vport 1 user-vlan 100 vlan 100
+ZXAN(config-if)# service-port 2 vport 1 user-vlan 200 vlan 200
+ZXAN(config-if)# exit
+
+4. Konfigurasi ONU Servis 
+	4.A 2Layanan (Port eth_0/1 Atau LAN1 bypass untuk Hotspot)
+ZXAN(config)# pon-onu-mng gpon-onu_1/2/1:1
+ZXAN(gpon-onu-mng 1/2/1:1)# flow mode 1 tag-filter vlan-filter untag-filter discard
+ZXAN(gpon-onu-mng 1/2/1:1)# flow 1 pri 0 vlan 100
+ZXAN(gpon-onu-mng 1/2/1:1)# flow 1 pri 0 vlan 200
+ZXAN(gpon-onu-mng 1/2/1:1)# gemport 1 flow 1
+ZXAN(gpon-onu-mng 1/2/1:1)# switchport-bind switch_0/1 iphost 1
+ZXAN(gpon-onu-mng 1/2/1:1)# switchport-bind switch_0/1 veip 1
+ZXAN(gpon-onu-mng 1/2/1:1)# pppoe 1 nat enable user USERNAME PPPoE password PASSWORD PPPoE
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan-filter-mode iphost 1 tag-filter vlan-filter untag-filter discard
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan-filter iphost 1 pri 0 vlan 100
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan port eth_0/4 mode tag vlan 200
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/1 from-internet
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/2 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/3 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/4 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 1 state enable mode forward protocol web https 		\\\\\\\Konfigurasi agar ONU bisa di remote dari WAN//////////////
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 998 state enable mode forward ingress-type lan protocol web https 
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 999 state enable ingress-type lan protocol ftp telnet ssh snmp tr069 
+
+	4.B 2Layanan (Port wifi0/2 atau SSID 2 bypass untuk Hotspot)
+ZXAN(config)# pon-onu-mng gpon-onu_1/2/1:1
+ZXAN(gpon-onu-mng 1/2/1:1)# flow mode 1 tag-filter vlan-filter untag-filter discard
+ZXAN(gpon-onu-mng 1/2/1:1)# flow 1 pri 0 vlan 100
+ZXAN(gpon-onu-mng 1/2/1:1)# flow 1 pri 0 vlan 200
+ZXAN(gpon-onu-mng 1/2/1:1)# gemport 1 flow 1
+ZXAN(gpon-onu-mng 1/2/1:1)# switchport-bind switch_0/1 iphost 1
+ZXAN(gpon-onu-mng 1/2/1:1)# switchport-bind switch_0/1 veip 1
+ZXAN(gpon-onu-mng 1/2/1:1)# pppoe 1 nat enable user USERNAME PPPoE password PASSWORD PPPoE
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan-filter-mode iphost 1 tag-filter vlan-filter untag-filter discard
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan-filter iphost 1 pri 0 vlan 100
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan port wifi_0/2 mode tag vlan 200
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/1 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/2 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/3 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/4 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 1 state enable mode forward protocol web https 
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 998 state enable mode forward ingress-type lan protocol web https 
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 999 state enable ingress-type lan protocol ftp telnet ssh snmp tr069 
+
+	4.C 1Layanan (Hanya PPPoE)
+ZXAN(config)# pon-onu-mng gpon-onu_1/2/1:1
+ZXAN(gpon-onu-mng 1/2/1:1)# flow mode 1 tag-filter vlan-filter untag-filter discard
+ZXAN(gpon-onu-mng 1/2/1:1)# flow 1 pri 0 vlan 100
+ZXAN(gpon-onu-mng 1/2/1:1)# gemport 1 flow 1
+ZXAN(gpon-onu-mng 1/2/1:1)# switchport-bind switch_0/1 iphost 1
+ZXAN(gpon-onu-mng 1/2/1:1)# switchport-bind switch_0/1 veip 1
+ZXAN(gpon-onu-mng 1/2/1:1)# pppoe 1 nat enable user USERNAME PPPoE password PASSWORD PPPoE
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan-filter-mode iphost 1 tag-filter vlan-filter untag-filter discard
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan-filter iphost 1 pri 0 vlan 100
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/1 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/2 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/3 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/4 from-onu
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 1 state enable mode forward protocol web https 
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 998 state enable mode forward ingress-type lan protocol web https 
+ZXAN(gpon-onu-mng 1/2/1:1)# security-mgmt 999 state enable ingress-type lan protocol ftp telnet ssh snmp tr069 
