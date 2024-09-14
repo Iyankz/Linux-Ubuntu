@@ -101,7 +101,7 @@ ZXAN(gpon-onu-mng 1/2/1:1)# switchport-bind switch_0/1 veip 1
 ZXAN(gpon-onu-mng 1/2/1:1)# pppoe 1 nat enable user USERNAME PPPoE password PASSWORD PPPoE
 ZXAN(gpon-onu-mng 1/2/1:1)# vlan-filter-mode iphost 1 tag-filter vlan-filter untag-filter discard
 ZXAN(gpon-onu-mng 1/2/1:1)# vlan-filter iphost 1 pri 0 vlan 100
-ZXAN(gpon-onu-mng 1/2/1:1)# vlan port eth_0/4 mode tag vlan 200
+ZXAN(gpon-onu-mng 1/2/1:1)# vlan port eth_0/1 mode tag vlan 200
 ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/1 from-internet
 ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/2 from-onu
 ZXAN(gpon-onu-mng 1/2/1:1)# dhcp-ip ethuni eth_0/3 from-onu
