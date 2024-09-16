@@ -37,7 +37,7 @@ $TTL 604800
 @ 	IN 	A	103.180.198.140
 www	IN 	A	103.180.198.140
 
-7. Edit juga file db.2.168.182 dengan perintah #nano /etc/bind/db.198.180.103
+7. Edit juga file db.198.180.103 dengan perintah #nano /etc/bind/db.198.180.103
 8. Isikan juga script pembuatan DNS pada file db.198.180.103.
 Gunakan script berikut ini:
 $TTL 604800
