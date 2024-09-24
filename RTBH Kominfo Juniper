@@ -1,0 +1,16 @@
+set policy-options community RTBH members 65535:666
+set policy-options community RTBH members 65535:65281
+set policy-options policy-statement RTBH term RTBH then community add RTBH
+set policy-options policy-statement RTBH term RTBH then next-hop discard
+set policy-options policy-statement RTBH term RTBH then accept
+set policy-options policy-statement Reject-All then reject
+set protocols bgp group Peer-RTBH type external
+set protocols bgp group Peer-RTBH description RTBH-Kominfo
+set protocols bgp group Peer-RTBH multihop
+set protocols bgp group Peer-RTBH local-address 103.187.117.0
+set protocols bgp group Peer-RTBH import RTBH
+set protocols bgp group Peer-RTBH export Reject-All
+set protocols bgp group Peer-RTBH peer-as 65535
+set protocols bgp group Peer-RTBH neighbor 103.158.253.146
+set protocols bgp group Peer-RTBH neighbor 103.163.102.122
+set protocols bgp group Peer-RTBH neighbor 202.57.26.242
