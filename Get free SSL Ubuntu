@@ -1,4 +1,10 @@
+Install SSL Apache2
 1. Install certbot 
 # apt install certbot python3-certbot-apache apache2 -y
 2. tambahkan ssl ke domain/subdomain
 certbot --apache --agree-tos --email you@yordimain.com -d yourdomain.com
+
+Install SSL NGINX
+# apt install certbot python3-certbot-nginx nginx -y
+2. tambahkan ssl ke domain/subdomain
+# certbot --nginx --agree-tos --email you@yordimain.com -d yourdomain.com
