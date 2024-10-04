@@ -56,15 +56,15 @@ ZXAN(config-pon)# onu-type-if ALL eth_0/1
 ZXAN(config-pon)# onu-type-if ALL eth_0/2
 ZXAN(config-pon)# onu-type-if ALL eth_0/3
 ZXAN(config-pon)# onu-type-if ALL eth_0/4
-ZXAN(config-pon)# onu-type-if ALL eth_0/1
-ZXAN(config-pon)# onu-type-if ALL eth_0/2
-ZXAN(config-pon)# onu-type-if ALL eth_0/3
-ZXAN(config-pon)# onu-type-if ALL eth_0/4
+ZXAN(config-pon)# onu-type-if ALL wifi_0/1
+ZXAN(config-pon)# onu-type-if ALL wifi_0/2
+ZXAN(config-pon)# onu-type-if ALL wifi_0/3
+ZXAN(config-pon)# onu-type-if ALL wifi_0/4
 ZXAN(config-pon)# uncfg-onu-display-info model sn pw 
 ZXAN(config-pon)# exit
 
 7. Aktifkan Port GPON
-ZXAN(config)# interface gpon_1/2/1		\\\\\\\Contoh Card 2 Port 1//////////////
+ZXAN(config)# interface gpon-olt_1/2/1		\\\\\\\Contoh Card 2 Port 1//////////////
 ZXAN(config-if)# no shut
 ZXAN(config-if)# end		\\\\\\\Pada step ini konfigurasi OLT sudah selesai//////////////
 ZXAN# write		\\\\\\\Jangan lupa di simpan//////////////
