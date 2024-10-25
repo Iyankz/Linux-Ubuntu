@@ -1,0 +1,36 @@
+1. Install NTP Server
+sudo apt install ntpsec
+2. Edit File ntp.conf
+sudo nano /etc/ntpsec/ntp.conf
+3. Disable pool default Dengan Menambahkan #
+#pool 0.ubuntu.pool.ntp.org iburst
+#pool 1.ubuntu.pool.ntp.org iburst
+#pool 2.ubuntu.pool.ntp.org iburst
+#pool 3.ubuntu.pool.ntp.org iburst
+4. Tambahkan NTP pool Indonesia di bawah default pool
+server 0.id.pool.ntp.org
+server 1.id.pool.ntp.org
+server 2.id.pool.ntp.org
+server 3.id.pool.ntp.org
+5. Edit Konfigurasi network 
+restrict 127.0.0.1
+restrict ::1
+restrict 0.0.0.0 mask 0.0.0.0 nomodify notrap
+6. Restart NTP Server
+systemctl restart ntpsec
+7. Download Script untuk SNMP Exterd
+wget https://raw.githubusercontent.com/librenms/librenms-agent/master/snmp/ntp-server.sh -O /etc/snmp/ntp-server.sh
+8. Buat Script yang sudah di download agar bisa di exkekusi
+chmod +x /etc/snmp/ntp-server.sh
+9. Edit file snmpd.conf
+nano /etc/snmp/snmpd.conf
+10. tambahkan script
+extend ntp-server /etc/snmp/ntp-server.sh
+11. Restart SNMPD
+systemctl restart snmpd
+12. Buka IP Server Librenms di browser
+13. Klik all Device
+14. Pilih Server Librenms
+15. Klik Logo Edit
+16. Klik Applications
+17. Jika NTP Server masih off, maka klik agar berubah menjadi on.
