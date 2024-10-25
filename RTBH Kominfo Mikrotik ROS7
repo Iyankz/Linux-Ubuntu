@@ -1,7 +1,3 @@
-/interface bridge
-add name=blackhole protocol-mode=none
-/ip address
-add address=192.0.2.2/24 interface=blackhole network=192.0.2.0
 /routing bgp connection
 add address-families=ip as=147141 disabled=no input.accept-large-communities=RTBH .filter=IN-RTBH local.address=103.176.95.0 .role=ebgp multihop=yes name=RTBH1-MTEN output.filter-chain=\
     OUT-RTBH remote.address=103.158.253.146/32 .as=65535 router-id=103.176.95.0 routing-table=main templates=MITRAINET
@@ -13,7 +9,8 @@ add address-families=ip as=147141 disabled=no input.accept-large-communities=RTB
 add communities=65535:666,65535:65281 disabled=no list=RTBH
 /routing filter rule
 add chain=IN-RTBH disabled=no rule="if(dst-len in 8-32) {accept}"
-add chain=OUT-RTBH disabled=no rule="if (dst-len <8 && dst-len >24) {set blackhole yes}"
 add chain=IN-RTBH disabled=no rule="if (protocol bgp) {set blackhole yes}"
-add chain=IN-RTBH disabled=no rule="if (dst-len <8 && dst-len >24) {set blackhole yes}"
-add chain=OUT-RTBH rule="append bgp-communities RTBH;reject "
+add chain=IN-RTBH disabled=no rule="set bgp-communities 65535:666,65535:65281; set blackhole yes; accept;"
+add chain=IN-RTBH disabled=no rule="reject;"
+add chain=OUT-RTBH disabled=no rule="append bgp-communities RTBH;reject "
+add chain=OUT-RTBH disabled=no rule="if (blackhole) {reject}"
