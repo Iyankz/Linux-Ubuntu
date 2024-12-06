@@ -4,7 +4,7 @@
 /tool fetch mode=ftp address=xxx.xxx.xxx.xxx user=Username Password=Password src-path=NamaFile.rsc dst-path=Directory/NamaFile.rsc upload=yes
 
 =============================================CISCO=============================================
-copy running-config ftp://xxx.xxx.xxx.xxx/Directory/ vrf management
+copy running-config ftp://username@xxx.xxx.xxx.xxx/Directory/ vrf management
 copy ftp://xxx.xxx.xxx.xxx/Directory/ vrf management
 Username : Username
 Password : Password
@@ -26,8 +26,21 @@ file download cfg startrun.dat ftp ipaddress xxx.xxx.xxx.xxx user Username passw
 =============================================Juniper=============================================
 file copy /config/juniper.conf.gz ftp://Username@xxx.xxx.xxx.xxx/
 
+# Auto Backup Juniper MX204
+MX2024>configure
+MX204#set system archival configuration transfer-interval 24
+MX204#set system archival configuration archive-sites ftp://username@xxx.xxx.xxx.xxx/directory/ password Password
+
 =============================================Huawei=============================================
 ftp put host-ip xxx.xxx.xxx.xxx username username sourcefile vrpcfg.zip
+
+# Auto Backup Switch Huawei Cloud Engine
+<SWITCH>system-view
+[SWTITH]configuration file auto-save backup-to-server server xxx.xxx.xxx.xxx transport-type ftp user Username password Password path /Directory/
+[SWTITH]configuration current backup-to-server monthly date TANGGAL(1-31) time JAM (JJ:MM:DD)
+
+# Auto Backup Switch Huawei S
+[SWTITH]set save-configuration backup-to-server server xxx.xxx.xxx.xxx transport-type ftp user Username password Password path /Directory/
 
 
 xxx.xxx.xxx.xxx = IP FTP Server
